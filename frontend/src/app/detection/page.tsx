@@ -1,36 +1,35 @@
-import { UploadZone } from "@/components/detection/UploadZone"
-import { DetectionResult } from "@/components/detection/DetectionResult"
-
-export default function Detection() {
-  return (
-    <div className="pt-24 max-w-5xl mx-auto p-6 grid grid-cols-2 gap-8">
-      <UploadZone />
-      <DetectionResult />
-    </div>
-  )
-}
 "use client"
 
 import { useState } from "react"
 import { Card } from "@/components/ui/card"
 
-export function UploadZone() {
+export default function DetectionPage() {
+  return (
+    <div className="p-10">
+      <h1 className="text-2xl font-bold mb-6">
+        AI Deepfake Detection
+      </h1>
+
+      <UploadZone />
+    </div>
+  )
+}
+
+function UploadZone() {
   const [file, setFile] = useState<File | null>(null)
 
   return (
-    <Card className="p-10 border-dashed border-2 border-white/20 text-center">
+    <Card className="p-6 border-dashed border-2 border-gray-300">
       <input
         type="file"
-        className="hidden"
-        id="file"
         onChange={(e) => setFile(e.target.files?.[0] || null)}
       />
-      <label htmlFor="file" className="cursor-pointer">
-        <div className="text-5xl mb-4">🎬</div>
-        <p className="font-semibold">
-          {file ? file.name : "Drop or click to upload"}
+
+      {file && (
+        <p className="mt-4 text-sm text-gray-500">
+          Uploaded: {file.name}
         </p>
-      </label>
+      )}
     </Card>
   )
 }

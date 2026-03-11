@@ -1,7 +1,11 @@
-import { clsx } from "clsx"
+import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 
-// Merge Tailwind + conditional classes safely
-export function cn(...inputs: any[]) {
+/**
+ * Utility function to merge Tailwind CSS classes safely.
+ * It combines clsx (conditional classes) with tailwind-merge
+ * to prevent duplicate or conflicting Tailwind styles.
+ */
+export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
-}
+} 
