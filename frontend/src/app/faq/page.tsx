@@ -1,159 +1,109 @@
-"use client";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { ChevronDown, ChevronUp, MessageSquare } from "lucide-react";
+"use client"
 
-export default function FaqPage() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const router = useRouter(); // ✅ Next.js navigation
+import { useState } from "react"
+import { ChevronDown, MessageCircle } from "lucide-react"
+import Link from "next/link" // ✅ ADDED
 
-  const faqs = [
-    {
-      question: "What is CaReBot?",
-      answer:
-        "CaReBot is your intelligent health companion, designed to guide, support, and simplify healthcare by providing smart solutions to everyday health issues—anytime, anywhere.",
-    },
-    {
-      question: "How does CaReBot work?",
-      answer:
-        "CaReBot uses advanced AI technology to analyze your health concerns and provide personalized recommendations, guidance, and support based on medical knowledge and best practices.",
-    },
-    {
-      question: "Is CaReBot a replacement for doctors?",
-      answer:
-        "No, CaReBot is designed to complement, not replace, professional medical care. For serious health concerns, always consult with qualified healthcare professionals.",
-    },
-    {
-      question: "Is my health information secure?",
-      answer:
-        "Yes, we take your privacy seriously. All health information is encrypted and stored securely, following industry-standard security protocols and healthcare privacy regulations.",
-    },
-    {
-      question: "How much does CaReBot cost?",
-      answer:
-        "CaReBot offers various pricing plans to suit different needs. Contact us for detailed pricing information and to find the plan that's right for you.",
-    },
-    {
-      question: "Can I use CaReBot on my mobile device?",
-      answer:
-        "Yes, CaReBot is designed to work seamlessly across all devices - desktop, tablet, and mobile - so you can access your health companion wherever you are.",
-    },
-  ];
+const faqs = [
+  {
+    q: "What is Savezo?",
+    a: "Savezo is an AI-powered social media platform that detects deepfakes, explicit content, and harmful signals before content is published.",
+  },
+  {
+    q: "How does Savezo detect harmful content?",
+    a: "Savezo uses multiple AI models including deepfake detection, nudity classification, and NLP-based mental health analysis to ensure content safety in real-time.",
+  },
+  {
+    q: "Can Savezo detect deepfake videos?",
+    a: "Yes. Savezo integrates advanced deepfake detection models (like Xception and ViT) to analyze visual inconsistencies and detect manipulated media.",
+  },
+  {
+    q: "Does Savezo block inappropriate content automatically?",
+    a: "Yes. Content that violates safety thresholds is automatically blocked and flagged with a detailed AI risk report.",
+  },
+  {
+    q: "Is my data safe on Savezo?",
+    a: "Absolutely. Savezo follows strict privacy and security protocols to ensure all user data and uploaded content remain secure.",
+  },
+  {
+    q: "Can I use Savezo for real-time content analysis?",
+    a: "Yes. Savezo performs sub-second AI analysis, allowing real-time moderation before content is published.",
+  },
+]
 
-  const toggleFAQ = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
-
-  const handleContactClick = () => {
-    router.push("/contact"); // ✅ Navigate to contact.tsx
-  };
+export default function FAQPage() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null)
 
   return (
-    <div className="min-h-screen w-full relative overflow-hidden">
-      {/* Background gradients */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#bcf3f3] bg-[#bcf3f3]"></div>
-      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/10"></div>
+    <div className="min-h-screen bg-gradient-to-br from-[#080c14] via-[#0d1320] to-[#0f172a] text-white px-6 py-20">
 
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-32 left-16 w-40 h-40 bg-gradient-to-br from-white/10 to-[#6cf0f2]/5 rounded-full animate-pulse blur-sm"></div>
-        <div className="absolute top-64 right-24 w-32 h-32 bg-gradient-to-br from-[#6cf0f2]/15 to-[#0c0966]/5 rounded-full animate-bounce delay-300 blur-sm"></div>
-        <div className="absolute bottom-40 left-1/3 w-48 h-48 bg-gradient-to-br from-white/8 to-[#6cf0f2]/8 rounded-full animate-pulse delay-700 blur-sm"></div>
-        <div className="absolute top-1/2 right-1/3 w-36 h-36 bg-gradient-to-br from-[#0c0966]/8 to-white/12 rounded-full animate-bounce delay-1000 blur-sm"></div>
+      {/* HEADER */}
+      <div className="text-center mb-16">
+        <h1 className="text-5xl font-extrabold mb-4">
+          Frequently Asked{" "}
+          <span className="bg-gradient-to-r from-blue-400 to-cyan-400 text-transparent bg-clip-text">
+            Questions
+          </span>
+        </h1>
+
+        <p className="text-gray-400 text-lg">
+          Learn more about how Savezo keeps your community safe
+        </p>
+
+        <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-cyan-400 mx-auto mt-6 rounded-full" />
       </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-6 py-12">
-        {/* Page Header (without HelpCircle icon) */}
-        <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold text-center mb-4 [font-family:'Outfit',Helvetica] tracking-tight">
-            <span className="text-[#0c0966] drop-shadow-lg">Frequently Asked</span>{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0c0966] via-[#6cf0f2] to-[#0c0966] animate-pulse">
-              Questions
-            </span>
-          </h1>
-          <p className="text-xl text-[#0c0966]/80 text-center mb-8 [font-family:'Outfit',Helvetica] font-medium max-w-2xl mx-auto leading-relaxed">
-            Find answers to common questions about CaReBot
+      {/* FAQ LIST */}
+      <div className="max-w-3xl mx-auto space-y-5">
+        {faqs.map((faq, i) => {
+          const isOpen = openIndex === i
+
+          return (
+            <div key={i} className="bg-white/5 border border-white/10 rounded-2xl">
+              <button
+                onClick={() => setOpenIndex(isOpen ? null : i)}
+                className="w-full flex justify-between px-6 py-5"
+              >
+                <span className="text-lg font-semibold">{faq.q}</span>
+                <ChevronDown className={isOpen ? "rotate-180 text-blue-400" : ""} />
+              </button>
+
+              {isOpen && (
+                <div className="px-6 pb-5 text-gray-400 text-sm">
+                  {faq.a}
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+
+      {/* CONTACT SUPPORT */}
+      <div className="max-w-3xl mx-auto mt-16 text-center">
+        <div className="rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 p-10 border border-white/10">
+
+          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
+            <MessageCircle />
+          </div>
+
+          <h2 className="text-2xl font-bold mb-3">
+            Still have questions?
+          </h2>
+
+          <p className="text-gray-300 mb-6">
+            We're here to help! Our support team is ready to assist you.
           </p>
-          <div className="w-32 h-1 bg-gradient-to-r from-[#6cf0f2] via-[#0c0966] to-[#6cf0f2] mx-auto rounded-full shadow-sm"></div>
-        </div>
 
-        {/* FAQ List */}
-        <div className="space-y-6">
-          {faqs.map((faq, index) => (
-            <div
-              key={index}
-              className={`bg-gradient-to-br from-white/25 to-white/15 backdrop-blur-lg rounded-2xl shadow-xl border border-white/40 cursor-pointer transition-all duration-500 hover:shadow-2xl transform hover:scale-[1.02] ${
-                openIndex === index
-                  ? "shadow-2xl bg-gradient-to-br from-white/35 to-white/25 scale-[1.02]"
-                  : hoveredIndex === index
-                  ? "shadow-xl bg-gradient-to-br from-white/30 to-white/20"
-                  : ""
-              }`}
-              onClick={() => toggleFAQ(index)}
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
-            >
-              <div className="p-6">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-xl md:text-2xl font-semibold text-[#0c0966] [font-family:'Outfit',Helvetica] flex-1 pr-4">
-                    {faq.question}
-                  </h3>
-                  <div
-                    className={`flex-shrink-0 transition-all duration-300 ${
-                      openIndex === index ? "transform rotate-180" : ""
-                    }`}
-                  >
-                    {openIndex === index ? (
-                      <ChevronUp className="w-6 h-6 text-[#6cf0f2]" />
-                    ) : (
-                      <ChevronDown className="w-6 h-6 text-[#0c0966]" />
-                    )}
-                  </div>
-                </div>
-
-                {/* Answer */}
-                <div
-                  className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                    openIndex === index
-                      ? "max-h-96 opacity-100"
-                      : "max-h-0 opacity-0"
-                  }`}
-                >
-                  <div className="pt-4 border-t border-white/20 mt-4">
-                    <p className="text-lg text-[#0c0966]/80 leading-relaxed [font-family:'Outfit',Helvetica] font-medium">
-                      {faq.answer}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Call to Action */}
-        <div className="text-center mt-16">
-          <div className="bg-gradient-to-br from-white/25 to-white/15 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/30 max-w-2xl mx-auto hover:from-white/30 hover:to-white/20 transition-all duration-500">
-            <div className="flex items-center justify-center mb-6">
-              <div className="bg-gradient-to-br from-[#6cf0f2]/20 to-[#0c0966]/10 p-3 rounded-full shadow-lg">
-                <MessageSquare className="text-[#0c0966] w-8 h-8" />
-              </div>
-            </div>
-            <h3 className="text-2xl font-bold text-[#0c0966] mb-4 [font-family:'Outfit',Helvetica]">
-              Still have questions?
-            </h3>
-            <p className="text-lg text-[#0c0966]/80 mb-8 [font-family:'Outfit',Helvetica] font-medium">
-              We're here to help! Our support team is ready to assist you.
-            </p>
-            <button
-              onClick={handleContactClick}
-              className="bg-gradient-to-r from-[#6cf0f2] via-[#5ce0e2] to-[#6cf0f2] hover:from-[#5ce0e2] hover:via-[#4cd0d2] hover:to-[#5ce0e2] text-[#0c0966] font-bold px-8 py-4 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 [font-family:'Outfit',Helvetica] text-lg transform hover:scale-105 border-2 border-[#6cf0f2]/30 hover:border-[#6cf0f2]/60"
-            >
+          {/* ✅ FIXED BUTTON */}
+          <Link href="/support">
+            <button className="px-8 py-3 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-semibold hover:opacity-90 transition">
               Contact Support
             </button>
-          </div>
+          </Link>
+
         </div>
       </div>
+
     </div>
-  );
+  )
 }

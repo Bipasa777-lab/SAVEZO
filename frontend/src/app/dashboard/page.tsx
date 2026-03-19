@@ -1,56 +1,112 @@
+"use client"
+
+import { useState } from "react"
 import { SidebarLeft } from "@/components/dashboard/SidebarLeft"
 import { SidebarRight } from "@/components/dashboard/SidebarRight"
 import { PostCard } from "@/components/dashboard/PostCard"
+import { CreatePostModal } from "@/components/dashboard/CreatePostModal"
+
+type DashboardPost = {
+  id: number
+  author: string
+  initials: string
+  time: string
+  text: string
+  variant: "video" | "split" | "gallery" | "alert" | "text"
+}
 
 export default function Dashboard() {
-  return (
-    <div className="pt-16 grid grid-cols-[260px_1fr_280px] min-h-screen">
-      <SidebarLeft />
-      <main className="p-6 max-w-2xl mx-auto">
-        <PostCard />
-      </main>
-      <SidebarRight />
-    </div>
-  )
-}
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 
-export function PostCard() {
+  // 🧠 POSTS STATE
+  const [posts, setPosts] = useState<DashboardPost[]>([
+    {
+      id: 1,
+      author: "Alex Rivera",
+      initials: "AR",
+      time: "2 hours ago",
+      text: "Incredible drone footage I captured over the city last night 🌃✨",
+      variant: "video",
+    },
+    {
+      id: 2,
+      author: "Samira Khan",
+      initials: "SK",
+      time: "5 hours ago",
+      text: "Amazing day at the AI Safety Conference! #DigitalWellbeing",
+      variant: "split",
+    },
+    {
+      id: 3,
+      author: "James Park",
+      initials: "JP",
+      time: "8 hours ago",
+      text: "Quick tutorial I made on how to spot AI-generated deepfake videos.",
+      variant: "video",
+    },
+    {
+      id: 4,
+      author: "AI Safety System",
+      initials: "⚠",
+      time: "System Alert",
+      text: "",
+      variant: "alert",
+    },
+    {
+      id: 5,
+      author: "Mia Laurent",
+      initials: "ML",
+      time: "Yesterday",
+      text: "Weekend vibes 🌞 Nature is the best therapy.",
+      variant: "gallery",
+    },
+    {
+      id: 6,
+      author: "Zara Mitchell",
+      initials: "ZM",
+      time: "2 days ago",
+      text: "Thread 🧵 on why AI-powered moderation is the only scalable solution for platform safety.",
+      variant: "text",
+    },
+  ])
+
+  // ➕ ADD POST FUNCTION
+  const handleAddPost = (newPost: Omit<DashboardPost, "id">) => {
+    const postWithId: DashboardPost = {
+      ...newPost,
+      id: Date.now(), // ✅ unique id
+    }
+
+    setPosts((prev) => [postWithId, ...prev])
+  }
+
   return (
-    <Card className="bg-cardBg border border-white/10 p-4 mb-6">
-      
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center font-bold">
-            AR
-          </div>
-          <div>
-            <div className="font-semibold">Alex Rivera</div>
-            <div className="text-xs text-gray-400">2 hours ago</div>
-          </div>
+    <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr_280px] min-h-[calc(100vh-68px)] bg-background text-foreground transition-colors duration-300">
+
+      {/* LEFT SIDEBAR */}
+      <aside className="hidden lg:block border-r border-border">
+        <SidebarLeft />
+      </aside>
+
+      {/* FEED */}
+      <main className="flex justify-center px-4 sm:px-6 py-6">
+        <div className="w-full max-w-[620px]">
+
+          {/* CREATE POST */}
+          <CreatePostModal onPost={handleAddPost} />
+
+          {/* POSTS */}
+          {posts.map((post) => (
+            <PostCard key={post.id} {...post} />
+          ))}
+
         </div>
+      </main>
 
-        <span className="px-3 py-1 text-xs rounded-full bg-green-500/20 text-green-400 border border-green-500/30">
-          ✅ Verified
-        </span>
-      </div>
+      {/* RIGHT SIDEBAR */}
+      <aside className="hidden lg:block border-l border-border">
+        <SidebarRight />
+      </aside>
 
-      <p className="mb-4">
-        Incredible drone footage captured last night ✨
-      </p>
-
-      <video
-        className="rounded-xl w-full mb-4"
-        src="https://www.w3schools.com/html/mov_bbb.mp4"
-        controls
-      />
-
-      <div className="flex justify-between text-gray-400 text-sm">
-        <Button variant="ghost">Like</Button>
-        <Button variant="ghost">Comment</Button>
-        <Button variant="ghost">Share</Button>
-      </div>
-    </Card>
+    </div>
   )
 }

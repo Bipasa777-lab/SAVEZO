@@ -1,23 +1,80 @@
-export function ProgressSteps() {
+"use client"
+
+import { useEffect, useState } from "react"
+
+export default function ProgressSteps() {
   const steps = [
-    "Uploading Media",
-    "Frame Extraction",
-    "AI Model Analysis",
-    "Generating Report"
+    "Preprocessing frames",
+    "Facial landmark extraction",
+    "GAN artifact detection",
+    "Frequency domain analysis",
+    "Computing final verdict",
   ]
 
+  const [currentStep, setCurrentStep] = useState(0)
+
+  useEffect(() => {
+    if (currentStep >= steps.length) return
+
+    const timer = setTimeout(() => {
+      setCurrentStep((prev) => prev + 1)
+    }, 800)
+
+    return () => clearTimeout(timer)
+  }, [currentStep])
+
   return (
-    <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+    <div className="w-full flex flex-col items-center text-center">
 
-      <h3 className="font-semibold mb-6">AI Processing Steps</h3>
+      {/* 🔄 LOADER */}
+      <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-6" />
 
-      <div className="space-y-4">
-        {steps.map((step, index) => (
-          <div key={index} className="flex items-center gap-3">
-            <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 animate-pulse" />
-            <span className="text-sm text-gray-300">{step}</span>
-          </div>
-        ))}
+      {/* TITLE */}
+      <h2 className="text-xl font-semibold text-foreground mb-2">
+        Analyzing Content
+      </h2>
+
+      {/* SUBTEXT */}
+      <p className="text-muted-foreground text-sm mb-8">
+        Detecting GAN artifacts...
+      </p>
+
+      {/* STEPS */}
+      <div className="w-full max-w-xs space-y-4 text-left">
+
+        {steps.map((step, i) => {
+          const isDone = i < currentStep
+          const isActive = i === currentStep
+
+          return (
+            <div key={i} className="flex items-center gap-3">
+
+              {/* DOT */}
+              <div
+                className={`
+                  w-2.5 h-2.5 rounded-full
+                  ${isDone ? "bg-safe" : ""}
+                  ${isActive ? "bg-primary animate-pulse" : ""}
+                  ${!isDone && !isActive ? "bg-muted" : ""}
+                `}
+              />
+
+              {/* TEXT */}
+              <span
+                className={`
+                  text-sm
+                  ${isDone ? "text-safe" : ""}
+                  ${isActive ? "text-primary" : ""}
+                  ${!isDone && !isActive ? "text-muted-foreground" : ""}
+                `}
+              >
+                {step}
+              </span>
+
+            </div>
+          )
+        })}
+
       </div>
 
     </div>
