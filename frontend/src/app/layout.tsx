@@ -1,21 +1,21 @@
-import "./globals.css"
-import Navbar from "@/components/navbar"
-import { Inter } from "next/font/google"
+import "./globals.css";
+import Navbar from "@/components/navbar";
+import { Inter } from "next/font/google";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
-})
+});
 
 export const metadata = {
   title: "Deepfake Analysis Lab",
   description: "AI powered deepfake detection platform",
-}
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html
@@ -24,18 +24,16 @@ export default function RootLayout({
       className={`${inter.variable}`}
     >
       <head>
-        {/* ✅ THEME INIT SCRIPT (RUNS BEFORE RENDER) */}
+        {/* ✅ FIXED THEME INIT SCRIPT */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
               (function () {
                 try {
-                  const theme = localStorage.getItem("theme");
-                  if (theme === "light") {
-                    document.documentElement.classList.remove("dark");
-                  } else {
-                    document.documentElement.classList.add("dark");
-                  }
+                  const saved = localStorage.getItem("theme");
+                  const theme = saved ? saved : "dark";
+
+                  document.documentElement.setAttribute("data-theme", theme);
                 } catch (e) {}
               })();
             `,
@@ -58,5 +56,5 @@ export default function RootLayout({
 
       </body>
     </html>
-  )
+  );
 }
