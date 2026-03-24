@@ -66,15 +66,17 @@ export default function MessagesPage() {
   };
 
   return (
-    <div className="h-[calc(100vh-68px)] flex bg-[#080c14] text-white">
-
-      {/* 🔹 CONVERSATION LIST (LEFT PANEL) */}
-      <div className="
-        w-[340px] 
-        border-r border-white/10 
-        bg-[#0d1320] 
-        flex flex-col
-      ">
+    <div className="h-[calc(100vh-68px)] flex bg-background text-foreground transition-colors">
+      
+      {/* CONVERSATION LIST (LEFT PANEL) */}
+      <div
+        className="
+          w-[340px]
+          border-r border-border
+          bg-card
+          flex flex-col
+        "
+      >
         <ConversationList
           conversations={conversations}
           activeId={activeId}
@@ -82,26 +84,30 @@ export default function MessagesPage() {
         />
       </div>
 
-      {/* 🔹 CHAT WINDOW (CENTER PANEL) */}
-      <div className="
-        flex-1 
-        flex 
-        flex-col 
-        bg-[#080c14]
-      ">
+      {/* CHAT WINDOW (CENTER PANEL) */}
+      <div
+        className="
+          flex-1
+          flex
+          flex-col
+          bg-background
+        "
+      >
         <ChatWindow
           conversation={activeConv}
           onSend={sendMessage}
         />
       </div>
 
-      {/* 🔹 INFO PANEL (RIGHT PANEL) */}
-      <div className="
-        hidden xl:flex 
-        w-[320px] 
-        border-l border-white/10 
-        bg-[#0d1320]
-      ">
+      {/* INFO PANEL (RIGHT PANEL) */}
+      <div
+        className="
+          hidden xl:flex
+          w-[320px]
+          border-l border-border
+          bg-card
+        "
+      >
         <InfoPanel conversation={activeConv} />
       </div>
 

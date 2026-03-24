@@ -19,17 +19,18 @@ export function PostCard({
   variant = "text",
 }: PostCardProps) {
   return (
-    <div className="
-      bg-[#0d1320] 
-      border border-white/10 
-      rounded-2xl 
-      overflow-hidden 
-      shadow-md 
-      hover:shadow-lg 
-      transition
-    ">
-
-      {/* 🔹 HEADER */}
+    <div
+      className="
+        bg-card
+        border border-border
+        rounded-2xl
+        overflow-hidden
+        shadow-sm
+        hover:shadow-md
+        transition
+      "
+    >
+      {/* HEADER */}
       <div className="flex justify-between items-center px-4 py-3">
         <div className="flex gap-3 items-center">
           <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
@@ -37,30 +38,31 @@ export function PostCard({
           </div>
 
           <div>
-            <div className="font-semibold text-sm text-white">
+            <div className="font-semibold text-sm text-foreground">
               {author}
             </div>
-            <div className="text-[11px] text-white/40">
+
+            <div className="text-[11px] text-muted-foreground">
               {time}
             </div>
           </div>
         </div>
 
         {/* Saved Badge */}
-        <button className="flex items-center gap-1 text-[11px] px-2 py-1 rounded-md bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 transition">
+        <button className="flex items-center gap-1 text-[11px] px-2 py-1 rounded-md bg-muted border border-border text-muted-foreground hover:bg-muted/80 transition">
           <Bookmark size={12} />
           unsave
         </button>
       </div>
 
-      {/* 🔹 TEXT */}
+      {/* TEXT */}
       {variant !== "alert" && (
-        <div className="px-4 pb-3 text-white/70 text-sm leading-relaxed line-clamp-3">
+        <div className="px-4 pb-3 text-muted-foreground text-sm leading-relaxed line-clamp-3">
           {text}
         </div>
       )}
 
-      {/* 🔹 VIDEO */}
+      {/* VIDEO */}
       {variant === "video" && (
         <div className="relative">
           <VideoPlayer />
@@ -72,54 +74,56 @@ export function PostCard({
         </div>
       )}
 
-      {/* 🔹 SPLIT */}
+      {/* SPLIT */}
       {variant === "split" && (
         <div className="grid grid-cols-2">
-          <div className="h-40 bg-white/5 flex items-center justify-center text-2xl">
+          <div className="h-40 bg-muted flex items-center justify-center text-2xl">
             🏛️
           </div>
-          <div className="h-40 bg-white/5 flex items-center justify-center text-2xl">
+
+          <div className="h-40 bg-muted flex items-center justify-center text-2xl">
             🎤
           </div>
         </div>
       )}
 
-      {/* 🔹 GALLERY */}
+      {/* GALLERY */}
       {variant === "gallery" && (
         <div className="grid grid-cols-2 grid-rows-2">
-          <div className="col-span-2 h-44 bg-white/5 flex items-center justify-center text-2xl">
+          <div className="col-span-2 h-44 bg-muted flex items-center justify-center text-2xl">
             🌅
           </div>
-          <div className="h-32 bg-white/5 flex items-center justify-center text-xl">
+
+          <div className="h-32 bg-muted flex items-center justify-center text-xl">
             🌊
           </div>
-          <div className="h-32 bg-white/5 flex items-center justify-center text-sm">
+
+          <div className="h-32 bg-muted flex items-center justify-center text-sm">
             +4
           </div>
         </div>
       )}
 
-      {/* 🔹 ALERT */}
+      {/* ALERT */}
       {variant === "alert" && (
         <div className="p-4 bg-red-500/10 border-t border-red-500/30">
-          <h3 className="text-red-400 font-semibold text-sm mb-1">
+          <h3 className="text-red-500 font-semibold text-sm mb-1">
             ⚠ Suicide Risk Detected
           </h3>
 
-          <p className="text-xs text-white/60">
+          <p className="text-xs text-muted-foreground">
             AI detected possible self-harm related content.
           </p>
 
-          <div className="mt-3 h-1.5 bg-white/10 rounded-full overflow-hidden">
+          <div className="mt-3 h-1.5 bg-muted rounded-full overflow-hidden">
             <div className="h-full bg-yellow-500 w-[73%]" />
           </div>
         </div>
       )}
 
-      {/* 🔹 FOOTER */}
+      {/* FOOTER */}
       {variant !== "alert" && (
-        <div className="flex items-center justify-between px-4 py-3 text-xs text-white/50 border-t border-white/10">
-
+        <div className="flex items-center justify-between px-4 py-3 text-xs text-muted-foreground border-t border-border">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1">
               <Heart size={14} /> 12.4K
@@ -130,7 +134,7 @@ export function PostCard({
             </span>
           </div>
 
-          <span className="text-[11px] text-white/40">
+          <span className="text-[11px] text-muted-foreground">
             1.2K views
           </span>
         </div>

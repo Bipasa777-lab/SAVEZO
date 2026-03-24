@@ -9,11 +9,10 @@ export default function InfoPanel({
   conversation: Conversation;
 }) {
   return (
-    <div className="w-[300px] border-l border-border bg-card p-5 hidden lg:flex flex-col gap-6">
-
-      {/* 🔥 PROFILE SECTION */}
+    <div className="w-[300px] border-l border-border bg-card p-5 hidden lg:flex flex-col gap-6 transition-colors">
+      
+      {/* PROFILE SECTION */}
       <div className="flex flex-col items-center text-center">
-
         <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xl font-bold mb-3">
           {conversation.initials}
         </div>
@@ -22,7 +21,7 @@ export default function InfoPanel({
           {conversation.name}
         </h3>
 
-        <p className="text-xs text-green-500 mt-1">
+        <p className="text-xs text-green-600 dark:text-green-400 mt-1">
           ● Active now
         </p>
 
@@ -31,7 +30,7 @@ export default function InfoPanel({
         </span>
       </div>
 
-      {/* 🔥 ACTION BUTTONS */}
+      {/* ACTION BUTTONS */}
       <div className="flex justify-center gap-3">
         <button className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary/20 transition">
           <Phone size={18} />
@@ -46,8 +45,8 @@ export default function InfoPanel({
         </button>
       </div>
 
-      {/* 🔥 SECTION: ABOUT */}
-      <div className="bg-muted/40 border border-border rounded-xl p-4">
+      {/* SECTION: ABOUT */}
+      <div className="bg-card border border-border rounded-xl p-4">
         <h4 className="text-sm font-semibold text-foreground mb-2">
           About
         </h4>
@@ -58,8 +57,8 @@ export default function InfoPanel({
         </p>
       </div>
 
-      {/* 🔥 SECTION: SHARED MEDIA */}
-      <div className="bg-muted/40 border border-border rounded-xl p-4">
+      {/* SECTION: SHARED MEDIA */}
+      <div className="bg-card border border-border rounded-xl p-4">
         <h4 className="text-sm font-semibold text-foreground mb-3">
           Shared Media
         </h4>
@@ -71,9 +70,9 @@ export default function InfoPanel({
         </div>
       </div>
 
-      {/* 🔥 SECTION: ACTIONS */}
+      {/* SECTION: ACTIONS */}
       <div className="mt-auto">
-        <button className="w-full py-2 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition text-sm">
+        <button className="w-full py-2 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 hover:bg-red-500/20 transition text-sm">
           Block User
         </button>
       </div>
