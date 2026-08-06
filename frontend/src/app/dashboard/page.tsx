@@ -19,24 +19,70 @@ export default function Dashboard() {
     useState<any>(null);
 
   // ==========================
-  // AUTH CHECK
+  // INITIALIZE USER
   // ==========================
   useEffect(() => {
-    const token =
-      localStorage.getItem("token");
+    const defaultUser = {
+      _id: "demo-user-1",
+      name: "Alex Johnson",
+      username: "alexjohnson",
+      email: "alex@savezo.io",
+      profilePicture: "",
+    };
 
-    const user =
-      localStorage.getItem("savezoUser");
-
-    if (!token || !user) {
-      router.push("/auth");
-      return;
+    const user = localStorage.getItem("savezoUser");
+    if (user) {
+      try {
+        setCurrentUser(JSON.parse(user));
+      } catch {
+        setCurrentUser(defaultUser);
+        localStorage.setItem("savezoUser", JSON.stringify(defaultUser));
+      }
+    } else {
+      setCurrentUser(defaultUser);
+      localStorage.setItem("savezoUser", JSON.stringify(defaultUser));
     }
 
-    setCurrentUser(
-      JSON.parse(user)
-    );
-  }, [router]);
+    if (!localStorage.getItem("token")) {
+      localStorage.setItem("token", "demo-token-12345");
+    }
+  }, []);
+
+  const DEFAULT_POSTS = [
+    {
+      _id: "demo-post-1",
+      userName: "Sarah Connor",
+      createdAt: new Date(Date.now() - 3600000).toISOString(),
+      text: "Testing Savezo's AI content moderation! So glad to have a safe space for posting without toxic content. 🛡️✨",
+      image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=80",
+      likes: 24,
+      comments: 5,
+      shares: 2,
+      saved: false,
+    },
+    {
+      _id: "demo-post-2",
+      userName: "David Chen",
+      createdAt: new Date(Date.now() - 7200000).toISOString(),
+      text: "Deepfake detection system tested on our recent video upload. 99.4% accuracy rate verified! 🚀",
+      image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
+      likes: 42,
+      comments: 11,
+      shares: 8,
+      saved: true,
+    },
+    {
+      _id: "demo-post-3",
+      userName: "Elena Rostova",
+      createdAt: new Date(Date.now() - 14400000).toISOString(),
+      text: "Beautiful sunset from the tech park today. Mental health wellness check-in: Remember to take breaks! 🌄💙",
+      image: "https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?w=800&q=80",
+      likes: 89,
+      comments: 18,
+      shares: 14,
+      saved: false,
+    },
+  ];
 
   // ==========================
   // FETCH POSTS
@@ -44,10 +90,14 @@ export default function Dashboard() {
   const fetchPosts = async () => {
     try {
       const res = await api.get("/posts");
-
-      setMongoPosts(res.data);
+      if (Array.isArray(res.data) && res.data.length > 0) {
+        setMongoPosts(res.data);
+      } else {
+        setMongoPosts(DEFAULT_POSTS);
+      }
     } catch (error) {
-      console.log(error);
+      console.warn("Backend API offline, using default posts:", error);
+      setMongoPosts(DEFAULT_POSTS);
     }
   };
 

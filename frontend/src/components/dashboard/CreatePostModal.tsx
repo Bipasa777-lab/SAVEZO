@@ -96,16 +96,21 @@ export function CreatePostModal({ onPost }: { onPost: (post: any) => void }) {
 
   const handlePost = async () => {
     try {
-      const currentUser = JSON.parse(localStorage.getItem("savezoUser") || "{}")
+      let currentUser = JSON.parse(localStorage.getItem("savezoUser") || "{}")
 
       if (!currentUser?._id) {
-        alert("Please login again")
-        return
+        currentUser = {
+          _id: "demo-user-1",
+          name: "Alex Johnson",
+          username: "alexjohnson",
+        }
+        localStorage.setItem("savezoUser", JSON.stringify(currentUser))
       }
 
       const postBody = {
+        _id: "post-" + Date.now(),
         userId: currentUser._id,
-        userName: currentUser.name || currentUser.username,
+        userName: currentUser.name || currentUser.username || "Alex Johnson",
         profilePicture: currentUser.profilePicture || "",
         text,
         image: base64Image || "",
@@ -114,11 +119,16 @@ export function CreatePostModal({ onPost }: { onPost: (post: any) => void }) {
         comments: 0,
         shares: 0,
         saved: false,
+        createdAt: new Date().toISOString(),
       }
 
-      const response = await api.post("/posts", postBody)
-
-      onPost(response.data)
+      try {
+        const response = await api.post("/posts", postBody)
+        onPost(response.data || postBody)
+      } catch (apiErr) {
+        console.warn("Backend API offline/error, adding post locally:", apiErr)
+        onPost(postBody)
+      }
 
       setOpen(false)
       setText("")

@@ -632,47 +632,48 @@ export default function Profile() {
   }, []);
 
   const fetchProfile = async () => {
-  try {
-    const savedUser =
-      localStorage.getItem("savezoUser");
+    const defaultUser = {
+      _id: "demo-user-1",
+      name: "Alex Johnson",
+      username: "@alexj",
+      email: "alex@savezo.io",
+      bio: "Digital Creator & AI Safety Advocate 🛡️",
+    };
 
-    if (!savedUser) return;
+    let currentUser = defaultUser;
+    const savedUser = localStorage.getItem("savezoUser");
 
-    const currentUser =
-      JSON.parse(savedUser);
+    if (savedUser) {
+      try {
+        currentUser = JSON.parse(savedUser);
+      } catch {
+        currentUser = defaultUser;
+      }
+    } else {
+      localStorage.setItem("savezoUser", JSON.stringify(defaultUser));
+    }
 
-    const userRes = await api.get(
-      `/users/${currentUser._id}`
-    );
+    setUser(currentUser);
 
-    setUser(userRes.data);
+    try {
+      const userRes = await api.get(`/users/${currentUser._id}`);
+      setUser(userRes.data);
 
-    const postRes = await api.get("/posts");
-
-    const myPosts =
-      postRes.data.filter(
-        (post: any) =>
-          post.userName ===
-          userRes.data.name
+      const postRes = await api.get("/posts");
+      const myPosts = postRes.data.filter(
+        (post: any) => post.userName === userRes.data.name
       );
+      setPosts(myPosts);
 
-    setPosts(myPosts);
-
-    const storyRes =
-      await api.get("/stories");
-
-    const myStories =
-      storyRes.data.filter(
-        (story: any) =>
-          story.userName ===
-          userRes.data.name
+      const storyRes = await api.get("/stories");
+      const myStories = storyRes.data.filter(
+        (story: any) => story.userName === userRes.data.name
       );
-
-    setStories(myStories);
-  } catch (error) {
-    console.log(error);
-  }
-};
+      setStories(myStories);
+    } catch (error) {
+      console.log("Using default profile fallback:", error);
+    }
+  };
 
   // Called by CreatePostModal once a post is successfully saved to MongoDB.
   const handleNewPost = (post: any) => {

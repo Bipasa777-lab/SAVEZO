@@ -149,9 +149,24 @@ export default function Navbar() {
                 AI Detection
               </Link>
 
+              <Link
+                href="/dashboard"
+                className="block px-4 py-2 hover:bg-muted"
+              >
+                Dashboard
+              </Link>
+
               <div className="border-t border-border"></div>
 
-              <button className="w-full text-left px-4 py-2 hover:bg-red-500/20 text-red-500">
+              <button
+                onClick={() => {
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("savezoUser");
+                  setProfileOpen(false);
+                  window.location.href = "/auth";
+                }}
+                className="w-full text-left px-4 py-2 hover:bg-red-500/20 text-red-500 font-medium"
+              >
                 Sign Out
               </button>
 

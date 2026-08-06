@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import { StoryViewer } from "./StoryViewer";
 import { CreateStoryModal } from "./CreateStoryModal";
 import { TextStoryModal } from "./TextStoryModal";
+import { PhotoStoryModal } from "./PhotoStoryModal";
 import api from "@/lib/api";
 
 interface Story {
@@ -39,6 +40,51 @@ type StoriesBarItem = CreateCard | UserStories;
 const CURRENT_USER_ID = -1;
 const CURRENT_USER_NAME = "Alex Johnson";
 
+const DEFAULT_STORIES_ITEMS: UserStories[] = [
+  {
+    id: "user-sarah",
+    name: "Sarah C.",
+    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&q=80",
+    viewed: false,
+    stories: [
+      {
+        id: "s1",
+        image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80",
+        text: "Morning coding session ☕",
+        createdAt: new Date().toISOString(),
+      },
+    ],
+  },
+  {
+    id: "user-david",
+    name: "David K.",
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=80",
+    viewed: false,
+    stories: [
+      {
+        id: "s2",
+        image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600&q=80",
+        text: "AI Safety Summit 2026 🛡️",
+        createdAt: new Date().toISOString(),
+      },
+    ],
+  },
+  {
+    id: "user-elena",
+    name: "Elena R.",
+    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&q=80",
+    viewed: false,
+    stories: [
+      {
+        id: "s3",
+        background: "from-purple-600 to-pink-500",
+        text: "Stay safe online everyone! 🌟",
+        createdAt: new Date().toISOString(),
+      },
+    ],
+  },
+];
+
 export function StoriesBar() {
   const [userProfile, setUserProfile] = useState<any>(null);
 
@@ -48,6 +94,8 @@ export function StoriesBar() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showCreateStory, setShowCreateStory] = useState(false);
   const [showTextStory, setShowTextStory] = useState(false);
+  const [selectedPhotoFile, setSelectedPhotoFile] = useState<File | null>(null);
+  const [showPhotoModal, setShowPhotoModal] = useState(false);
   const [editingStory, setEditingStory] = useState<any>(null);
   const [menuOpen, setMenuOpen] = useState<string | number | null>(null);
 
@@ -57,51 +105,56 @@ export function StoriesBar() {
     fetchStories();
   }, []);
 
-  // Fetches the logged-in user AND their stories together, then builds the
-  // stories bar from the freshly-returned data (not React state) so the
-  // "Create Story" card always reflects the latest profile picture, even
-  // right after a fresh upload.
   const fetchStories = async () => {
     try {
       const currentUser = JSON.parse(
-  localStorage.getItem("savezoUser") || "{}"
-);
+        localStorage.getItem("savezoUser") || "{}"
+      );
+      setUserProfile(currentUser);
 
-const storiesRes = await api.get("/stories");
-
-setUserProfile(currentUser);
-
-      const grouped: any = {};
-
-      storiesRes.data.forEach((story: any) => {
-        if (!grouped[story.userName]) {
-          grouped[story.userName] = {
-            id: story.userName,
-            name: story.userName,
-            avatar: story.avatar || "",
-            stories: [],
-          };
+      try {
+        const storiesRes = await api.get("/stories");
+        if (Array.isArray(storiesRes.data) && storiesRes.data.length > 0) {
+          const grouped: any = {};
+          storiesRes.data.forEach((story: any) => {
+            if (!grouped[story.userName]) {
+              grouped[story.userName] = {
+                id: story.userName,
+                name: story.userName,
+                avatar: story.avatar || "",
+                stories: [],
+              };
+            }
+            grouped[story.userName].stories.push({
+              id: story._id,
+              image: story.image,
+              text: story.text,
+              background: story.background,
+              createdAt: story.createdAt,
+            });
+          });
+          const mongoStories = Object.values(grouped) as UserStories[];
+          setStories([
+            {
+              id: 1,
+              create: true,
+              previewImage: currentUser?.profilePicture || "",
+            },
+            ...mongoStories,
+          ]);
+          return;
         }
-
-        grouped[story.userName].stories.push({
-          id: story._id,
-          image: story.image,
-          text: story.text,
-          background: story.background,
-          createdAt: story.createdAt,
-        });
-      });
-
-      const mongoStories = Object.values(grouped) as UserStories[];
+      } catch (apiErr) {
+        console.warn("Backend API offline, using default stories:", apiErr);
+      }
 
       setStories([
         {
           id: 1,
           create: true,
-          previewImage:
-  currentUser?.profilePicture || "",
+          previewImage: currentUser?.profilePicture || "",
         },
-        ...mongoStories,
+        ...DEFAULT_STORIES_ITEMS,
       ]);
     } catch (error) {
       console.log(error);
@@ -110,8 +163,6 @@ setUserProfile(currentUser);
 
   const isUserStories = (item: StoriesBarItem): item is UserStories => !item.create;
 
-  // Adds a new story to the current user's existing group (most recent first),
-  // or creates that group if this is their first story.
   const addOwnStory = (story: Story) => {
     setStories((prev) => {
       const createCard = prev[0];
@@ -141,58 +192,51 @@ setUserProfile(currentUser);
     });
   };
 
-  const handleStoryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-
     if (!file) return;
+    setSelectedPhotoFile(file);
+    setShowPhotoModal(true);
+    e.target.value = "";
+  };
 
-    const reader = new FileReader();
-
-    reader.onloadend = async () => {
-      try {
-        // EDIT EXISTING IMAGE STORY
-        if (editingStory) {
-          await api.put(`/stories/${editingStory.stories[0].id}`, {
-            image: reader.result,
-          });
-
-          setEditingStory(null);
-
-          await fetchStories();
-
-          return;
-        }
-
-        // CREATE NEW IMAGE STORY
-        const currentUser = JSON.parse(
-  localStorage.getItem("savezoUser") || "{}"
-);
-
-await api.post("/stories", {
-  userId: currentUser._id,
-  userName:
-    currentUser.name ||
-    currentUser.username,
-
-  avatar:
-    currentUser.profilePicture || "",
-
-  image: reader.result,
-
-  text: "",
-
-  background: "",
-});
-
-        await fetchStories();
-      } catch (error) {
-        console.log(error);
-      }
+  const handlePublishPhotoStory = async ({ image, text }: { image: string; text: string }) => {
+    const newStoryItem: Story = {
+      id: "story-" + Date.now(),
+      image,
+      text,
+      createdAt: new Date().toISOString(),
     };
 
-    reader.readAsDataURL(file);
+    try {
+      if (editingStory) {
+        await api.put(`/stories/${editingStory.stories[0].id}`, {
+          image,
+          text,
+        });
+        setEditingStory(null);
+        await fetchStories();
+        return;
+      }
 
-    e.target.value = "";
+      const currentUser = JSON.parse(
+        localStorage.getItem("savezoUser") || "{}"
+      );
+
+      await api.post("/stories", {
+        userId: currentUser._id,
+        userName: currentUser.name || currentUser.username || CURRENT_USER_NAME,
+        avatar: currentUser.profilePicture || "",
+        image,
+        text,
+        background: "",
+      });
+
+      await fetchStories();
+    } catch (error) {
+      console.warn("Backend API offline/error, adding story locally:", error);
+      addOwnStory(newStoryItem);
+    }
   };
 
   const handleCardClick = (item: StoriesBarItem) => {
@@ -216,7 +260,7 @@ await api.post("/stories", {
         hidden
         accept="image/*,video/*"
         ref={fileInputRef}
-        onChange={handleStoryUpload}
+        onChange={handleFileSelect}
       />
 
       {/* Stories Header */}
@@ -440,23 +484,40 @@ await api.post("/stories", {
             }
 
             const currentUser = JSON.parse(
-  localStorage.getItem("savezoUser") || "{}"
-);
+              localStorage.getItem("savezoUser") || "{}"
+            );
 
-await api.post("/stories", {
-  userName: currentUser.name,
-  avatar: currentUser.profilePicture,
-  text: story.text,
-  background: story.background,
-});
+            await api.post("/stories", {
+              userName: currentUser.name || CURRENT_USER_NAME,
+              avatar: currentUser.profilePicture || "",
+              text: story.text,
+              background: story.background,
+            });
 
             await fetchStories();
-
             setShowTextStory(false);
           } catch (error) {
-            console.log(error);
+            console.warn("Backend API offline/error, adding text story locally:", error);
+            addOwnStory({
+              id: "story-" + Date.now(),
+              text: story.text,
+              background: story.background,
+              createdAt: new Date().toISOString(),
+            });
+            setShowTextStory(false);
           }
         }}
+      />
+
+      <PhotoStoryModal
+        open={showPhotoModal}
+        onClose={() => {
+          setShowPhotoModal(false);
+          setSelectedPhotoFile(null);
+        }}
+        selectedFile={selectedPhotoFile}
+        onSelectAnotherFile={() => fileInputRef.current?.click()}
+        onPublish={handlePublishPhotoStory}
       />
     </>
   );

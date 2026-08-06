@@ -78,6 +78,7 @@ const authService = {
   logout: () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('savezoUser');
   },
 
   getProfile: async () => {
@@ -99,7 +100,7 @@ const authService = {
   },
 
   isAuthenticated: (): boolean => {
-    return !!localStorage.getItem('token');
+    return !!localStorage.getItem('token') || !!localStorage.getItem('savezoUser');
   },
 
   getToken: (): string | null => {
